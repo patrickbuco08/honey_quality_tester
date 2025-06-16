@@ -98,8 +98,12 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
           ><input type="text" id="ECValue" readonly />
         </div>
         <div class="field">
-          <label for="moistureValue">Moisture(%):</label
+          <label for="moistureValue">Moisture (%):</label
           ><input type="text" id="moistureValue" readonly />
+        </div>
+        <div class="field">
+          <label for="spectroscopyMoisture">Spectroscopy Moisture (%):</label
+          ><input type="text" id="spectroscopyMoisture" readonly />
         </div>
       </div>
     </div>
@@ -212,6 +216,7 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
             document.getElementById("phValue").value = data.pH;
             document.getElementById("ECValue").value = data.ec;
             document.getElementById("moistureValue").value = data.moisture;
+            document.getElementById("spectroscopyMoisture").value = data.spectroscopyMoisture; // Now using the dedicated spectroscopyMoisture value
             document.getElementById("tempValue").value = data.temperature;
             document.getElementById("humidityValue").value = data.humidity;
             document.getElementById("violetCh1Value").value =

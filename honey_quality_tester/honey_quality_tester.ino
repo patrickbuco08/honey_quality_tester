@@ -26,6 +26,7 @@ File logFile;  // File object for SD card logging
 float phValue = 0;
 float ECValue = 0;
 float moistureValue = 0;
+float spectroscopyMoisture = 0; // New variable for spectroscopy-based moisture
 float tempValue = 0;
 float humidityValue = 0;
 float violet_ch1_value = 0;
@@ -194,7 +195,7 @@ void handleStartAnalysis() {
   // Calculate averages
   phValue = phTotal / readingsCount;
   ECValue = ECTotal / readingsCount;
-  moistureValue = calculateMoisture(ECValue);
+  moistureValue = calculateMoisture(ECValue); // Keep original EC-based moisture calculation
   tempValue = tempTotal / readingsCount;
   humidityValue = humidityTotal / readingsCount;
   violet_ch1_value = violetCh1Total / readingsCount;
@@ -238,13 +239,17 @@ void handleStartAnalysis() {
   absorbanceNIR = (I0[9] > 0 && nir_value > 0)
                     ? log10(I0[9] / nir_value)
                     : -1;
+                    
+  // Calculate spectroscopy-based moisture and save to global variable
+  spectroscopyMoisture = calculateMoistureFromSpectroscopy(absorbanceVioletCh1, absorbanceVioletCh2, absorbanceBlue, absorbanceOrange, absorbanceNIR, absorbanceGreenCh5);
+  // Keep original moistureValue from EC calculation, store spectroscopy result separately
 
   bool isReal = assessHoneyQuality(phValue, ECValue, moistureValue, absorbanceVioletCh1, absorbanceVioletCh2, absorbanceBlue, absorbanceGreenCh4, absorbanceGreenCh5, absorbanceOrange, absorbanceRedCh7, absorbanceRedCh8, absorbanceClear, absorbanceNIR);
   // Display results on OLED
   displayResults(phValue, moistureValue, ECValue, tempValue, humidityValue, isReal);
 
   // Log results to SD card
-  logResults(phValue, ECValue, moistureValue, tempValue, humidityValue, absorbanceVioletCh1, absorbanceVioletCh2, absorbanceBlue, absorbanceGreenCh4, absorbanceGreenCh5, absorbanceOrange, absorbanceRedCh7, absorbanceRedCh8, absorbanceClear, absorbanceNIR, isReal);
+  logResults(phValue, ECValue, moistureValue, spectroscopyMoisture, tempValue, humidityValue, absorbanceVioletCh1, absorbanceVioletCh2, absorbanceBlue, absorbanceGreenCh4, absorbanceGreenCh5, absorbanceOrange, absorbanceRedCh7, absorbanceRedCh8, absorbanceClear, absorbanceNIR, isReal);
 
   // Send JSON response back to the client
   String response = "{\"message\": \"Analysis completed.\"}";
@@ -594,7 +599,7 @@ void handleCalibrateAS7341() {
 }
 
 
-void logResults(float ph, float ec, float moisture, float temperature, float humidity, float violetCh1, float violetCh2, float blue, float greenCh4, float greenCh5, float orange, float redCh7, float redCh8, float clear, float nir, bool isReal) {
+void logResults(float ph, float ec, float moisture, float spectroscopyMoisture, float temperature, float humidity, float violetCh1, float violetCh2, float blue, float greenCh4, float greenCh5, float orange, float redCh7, float redCh8, float clear, float nir, bool isReal) {
   Serial.println("Logging results to SD card...");
   logFile = SD.open("/sensor_data.json", FILE_WRITE);  // Use a fixed filename
   if (logFile) {
@@ -604,6 +609,8 @@ void logResults(float ph, float ec, float moisture, float temperature, float hum
     logFile.print(ec);
     logFile.print(", \"moisture\": ");
     logFile.print(moisture);
+    logFile.print(", \"spectroscopyMoisture\": ");
+    logFile.print(spectroscopyMoisture);
     logFile.print(", \"temperature\": ");
     logFile.print(temperature);
     logFile.print(", \"humidity\": ");
@@ -691,5 +698,59 @@ float calculateMoisture(float ec) {
 
   float moisture = (a * ec * ec) + (b * ec) + c;
 
+  return moisture;
+}
+
+// Function to calculate moisture based on spectroscopy results
+// Uses polynomial regression formula derived from training data
+float calculateMoistureFromSpectroscopy(float violetCh1, float violetCh2, float blueCh3, float orangeCh6, float nirCh9, float greenCh5) {
+  // Moisture calculation based on polynomial regression (degree=2)
+  // Formula: Moisture = 23.1249 + 54.3536*Violet Ch1 + -43.5890*Violet Ch2 + 41.9368*Blue Ch3 + 
+  //                     -361.6413*Orange Ch6 + -15.1817*NIR Ch9 + -10.8623*Green Ch5 + 
+  //                     -186.6120*Violet Ch1^2 + 243.8156*Violet Ch1*Violet Ch2 + -486.9318*Violet Ch1*Blue Ch3 + 
+  //                     -175.0399*Violet Ch1*Orange Ch6 + 381.6333*Violet Ch1*NIR Ch9 + 552.2680*Violet Ch1*Green Ch5 + 
+  //                     -142.7362*Violet Ch2^2 + 422.9107*Violet Ch2*Blue Ch3 + -145.5206*Violet Ch2*Orange Ch6 + 
+  //                     104.5441*Violet Ch2*NIR Ch9 + -151.4370*Violet Ch2*Green Ch5 + -237.5196*Blue Ch3^2 + 
+  //                     1025.7085*Blue Ch3*Orange Ch6 + -240.8848*Blue Ch3*NIR Ch9 + -7.0748*Blue Ch3*Green Ch5 + 
+  //                     -611.0683*Orange Ch6^2 + 1038.7428*Orange Ch6*NIR Ch9 + -1009.5279*Orange Ch6*Green Ch5 + 
+  //                     -348.7810*NIR Ch9^2 + -71.8958*NIR Ch9*Green Ch5 + 83.8665*Green Ch5^2
+  
+  float moisture = 23.1249;
+  
+  // First order terms
+  moisture += 54.3536 * violetCh1;
+  moisture += -43.5890 * violetCh2;
+  moisture += 41.9368 * blueCh3;
+  moisture += -361.6413 * orangeCh6;
+  moisture += -15.1817 * nirCh9;
+  moisture += -10.8623 * greenCh5;
+  
+  // Second order terms (squared and interactions)
+  moisture += -186.6120 * violetCh1 * violetCh1;  // Violet Ch1^2
+  moisture += 243.8156 * violetCh1 * violetCh2;   // Violet Ch1 * Violet Ch2
+  moisture += -486.9318 * violetCh1 * blueCh3;    // Violet Ch1 * Blue Ch3
+  moisture += -175.0399 * violetCh1 * orangeCh6;  // Violet Ch1 * Orange Ch6
+  moisture += 381.6333 * violetCh1 * nirCh9;      // Violet Ch1 * NIR Ch9
+  moisture += 552.2680 * violetCh1 * greenCh5;    // Violet Ch1 * Green Ch5
+  moisture += -142.7362 * violetCh2 * violetCh2;  // Violet Ch2^2
+  moisture += 422.9107 * violetCh2 * blueCh3;     // Violet Ch2 * Blue Ch3
+  moisture += -145.5206 * violetCh2 * orangeCh6;  // Violet Ch2 * Orange Ch6
+  moisture += 104.5441 * violetCh2 * nirCh9;      // Violet Ch2 * NIR Ch9
+  moisture += -151.4370 * violetCh2 * greenCh5;   // Violet Ch2 * Green Ch5
+  moisture += -237.5196 * blueCh3 * blueCh3;     // Blue Ch3^2
+  moisture += 1025.7085 * blueCh3 * orangeCh6;   // Blue Ch3 * Orange Ch6
+  moisture += -240.8848 * blueCh3 * nirCh9;      // Blue Ch3 * NIR Ch9
+  moisture += -7.0748 * blueCh3 * greenCh5;      // Blue Ch3 * Green Ch5
+  moisture += -611.0683 * orangeCh6 * orangeCh6;  // Orange Ch6^2
+  moisture += 1038.7428 * orangeCh6 * nirCh9;     // Orange Ch6 * NIR Ch9
+  moisture += -1009.5279 * orangeCh6 * greenCh5;  // Orange Ch6 * Green Ch5
+  moisture += -348.7810 * nirCh9 * nirCh9;        // NIR Ch9^2
+  moisture += -71.8958 * nirCh9 * greenCh5;       // NIR Ch9 * Green Ch5
+  moisture += 83.8665 * greenCh5 * greenCh5;      // Green Ch5^2
+  
+  // Ensure moisture is within realistic bounds
+  if (moisture < 10.0) moisture = 10.0;  // Minimum realistic moisture
+  if (moisture > 40.0) moisture = 40.0;  // Maximum realistic moisture
+  
   return moisture;
 }
