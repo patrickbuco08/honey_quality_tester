@@ -81,6 +81,45 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
         margin-top: 10px;
         font-size: 0.9em;
       }
+    .note {
+      color: #b71c1c;
+      margin-top: 10px;
+      font-size: 0.98em;
+    }
+    .pns-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      background: #222;
+      color: #fff;
+      font-size: 1em;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .pns-table th, .pns-table td {
+      border-bottom: 1px solid #444;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .pns-table th {
+      background: #333;
+      font-weight: bold;
+      font-size: 1.05em;
+      color: #fff;
+    }
+    .pns-table tr:last-child td {
+      border-bottom: none;
+    }
+    .pns-table em {
+      color: #ffccbc;
+      font-style: italic;
+    }
+    .note strong {
+      color: #ff5252;
+      display: block;
+      margin-bottom: 6px;
+    }
     </style>
   </head>
   <body>
@@ -110,7 +149,29 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
 
     <div class="section">
       <div class="note">
-        According to the Philippine National Standard (PNS/BAFS _:2022) - Honey Product Standard - Specifications, honey is considered compliant if its moisture content does not exceed 20% for Apis mellifera and Apis cerana, 23% for wild honey such as Apis dorsata and Apis breviligula, and 24% for stingless bee honey (Tetragonula spp.). In terms of electrical conductivity (EC), the standard specifies that blossom honeys and their blends must have an EC not exceeding 0.8 mS/cm, while honeydew and chestnut honeys, as well as their blends (excluding certain exceptions like eucalyptus or linden), must have an EC of not less than 0.8 mS/cm.
+        <strong>According to the Philippine National Standard (PNS/BAFS __:2022), honey should have:</strong>
+        <table class="pns-table">
+          <thead>
+            <tr>
+              <th>Moisture Content</th>
+              <th>Electrical Conductivity (EC)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>&le; 20% <em>(Apis mellifera, cerana)</em></td>
+              <td>&le; 0.8 mS/cm</td>
+            </tr>
+            <tr>
+              <td>&le; 23% <em>(wild honey)</em></td>
+              <td>&ge; 0.8 mS/cm <span style="font-size:0.95em;">(honeydew/chestnut)</span></td>
+            </tr>
+            <tr>
+              <td>&le; 24% <em>(stingless bee honey)</em></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
