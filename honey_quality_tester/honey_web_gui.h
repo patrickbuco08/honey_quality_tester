@@ -109,6 +109,12 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
     </div>
 
     <div class="section">
+      <div class="note">
+        According to the Philippine National Standard (PNS/BAFS _:2022) - Honey Product Standard - Specifications, honey is considered compliant if its moisture content does not exceed 20% for Apis mellifera and Apis cerana, 23% for wild honey such as Apis dorsata and Apis breviligula, and 24% for stingless bee honey (Tetragonula spp.). In terms of electrical conductivity (EC), the standard specifies that blossom honeys and their blends must have an EC not exceeding 0.8 mS/cm, while honeydew and chestnut honeys, as well as their blends (excluding certain exceptions like eucalyptus or linden), must have an EC of not less than 0.8 mS/cm.
+      </div>
+    </div>
+
+    <div class="section">
       <h2>Ambient Reading</h2>
       <div class="field-group">
         <div class="field">
