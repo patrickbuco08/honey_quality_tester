@@ -90,29 +90,29 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
       width: 100%;
       border-collapse: collapse;
       margin-top: 8px;
-      background: #222;
-      color: #fff;
+      background: #fff;
+      color: #222;
       font-size: 1em;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     .pns-table th, .pns-table td {
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid #e0e0e0;
       padding: 10px 14px;
       text-align: left;
     }
     .pns-table th {
-      background: #333;
+      background: #f5f5f5;
       font-weight: bold;
       font-size: 1.05em;
-      color: #fff;
+      color: #a86e00;
     }
     .pns-table tr:last-child td {
       border-bottom: none;
     }
     .pns-table em {
-      color: #ffccbc;
+      color: #b77a00;
       font-style: italic;
     }
     .note strong {
