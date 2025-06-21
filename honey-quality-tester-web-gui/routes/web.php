@@ -18,4 +18,5 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Protected Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/latest-honey-sample', [DashboardController::class, 'latest'])->name('latest.honey.sample');
 });

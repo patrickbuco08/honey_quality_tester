@@ -24,7 +24,8 @@
                     class="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden"
                     role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                     <div class="py-1" role="none">
-                        <form method="POST" action="#" role="none">
+                        <form method="POST" action="{{ route('logout') }}" role="none">
+                            @csrf
                             <button type="submit" class="block w-full px-4 py-2 text-center text-sm text-gray-700"
                                 role="menuitem" tabindex="-1" id="menu-item-3">Sign out</button>
                         </form>
