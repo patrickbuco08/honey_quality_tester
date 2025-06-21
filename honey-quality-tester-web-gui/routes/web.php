@@ -2,16 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 use Bocum\Http\Controllers\Auth\LoginController;
+use Bocum\Http\Controllers\HomeController;
+use Bocum\Http\Controllers\DashboardController;
+
+// Home Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Dashboard Routes
 
 // Authentication Routes
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Protected Routes
 Route::middleware(['auth'])->group(function () {
-    // Add your protected routes here
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });

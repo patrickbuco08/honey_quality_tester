@@ -45,6 +45,23 @@ docker-compose up --build -d
 
 ---
 
+## Generate Token ID
+
+```
+LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 64; echo
+```
+
+## API Testing
+
+You can test the Honey Samples API using the following curl command:
+
+```bash
+curl -X POST http://bocum.local/api/honey-samples \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${BOCUM_API_TOKEN_ID}" \
+  -d '{"data":{"source":"curl"}}'
+```
+
 ## Run Database Migrations
 
 After building the application, you need to run the database migrations before accessing the application. Run the following command:
