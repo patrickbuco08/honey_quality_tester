@@ -58,3 +58,12 @@ docker-compose exec app php artisan migrate
 ## Access the Application
 
 https://bocum.local/
+
+---
+
+## 📦 Compiling Tailwind Assets
+
+```
+npm run dev     # for dev
+npm run build   # for production
+```
