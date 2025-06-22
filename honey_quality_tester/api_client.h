@@ -18,6 +18,9 @@ bool sendHoneySampleToServer(String jsonPayload) {
 
     int httpResponseCode = https.POST(jsonPayload);
 
+    Serial.println("httpResponseCode: " + String(httpResponseCode));
+    Serial.println("https.getString(): " + https.getString());
+
     if (httpResponseCode == 201) {
         Serial.println("POST successful");
         Serial.println(https.getString());
