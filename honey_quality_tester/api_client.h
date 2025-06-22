@@ -47,6 +47,18 @@ bool sendHoneySampleToServer(String jsonPayload) {
     return success;
 }
 
+// Helper function to handle NaN values
+String formatValue(float value, int decimals) {
+  if (isnan(value)) return "null";
+  return String(value, decimals);
+}
+
+// Helper function to ensure absorbance values are non-negative
+String formatAbsorbance(float value, int decimals) {
+  if (isnan(value)) return "null";
+  return String(max(value, 0.0f), decimals); // Ensure non-negative
+}
+
 // Function to resolve JSON data from honey sample parameters
 String jsonDataResolver(
     float humidityValue,
@@ -66,20 +78,7 @@ String jsonDataResolver(
     float absorbanceVioletCh1,
     float absorbanceVioletCh2
   ) {
-    String jsonPayload = "{\"data\":{";
-    jsonPayload += "\"ambient_reading\": {\"humidity\": " + String(humidityValue, 2) + ", \"temperature\": " + String(tempValue, 2) + "},";
-    jsonPayload += "\"sensor_readings\": {\"ec_value\": " + String(ECValue, 2) + ", \"moisture\": " + String(moistureValue, 2) + ", \"ph_value\": " + String(phValue, 2) + ", \"spectroscopy_moisture\": " + String(spectroscopyMoisture, 2) + "},";
-    jsonPayload += "\"absorbance_readings\": {";
-    jsonPayload += "\"blue\": " + String(absorbanceBlue, 2) + ", ";
-    jsonPayload += "\"clear\": " + String(absorbanceClear, 2) + ", ";
-    jsonPayload += "\"orange\": " + String(absorbanceOrange, 2) + ", ";
-    jsonPayload += "\"near_ir\": " + String(absorbanceNIR, 2) + ", ";
-    jsonPayload += "\"red_ch7\": " + String(absorbanceRedCh7, 2) + ", ";
-    jsonPayload += "\"red_ch8\": " + String(absorbanceRedCh8, 2) + ", ";
-    jsonPayload += "\"green_ch4\": " + String(absorbanceGreenCh4, 2) + ", ";
-    jsonPayload += "\"green_ch5\": " + String(absorbanceGreenCh5, 2) + ", ";
-    jsonPayload += "\"violet_ch1\": " + String(absorbanceVioletCh1, 2) + ", ";
-    jsonPayload += "\"violet_ch2\": " + String(absorbanceVioletCh2, 2);
-    jsonPayload += "}}";
+    String jsonPayload = "{\"data\":{\"ambient_reading\":{\"humidity\":" + formatValue(humidityValue, 2) + ",\"temperature\":" + formatValue(tempValue, 2) + "},\"sensor_readings\":{\"ec_value\":" + formatValue(ECValue, 2) + ",\"moisture\":" + formatValue(moistureValue, 2) + ",\"ph_value\":" + formatValue(phValue, 2) + ",\"spectroscopy_moisture\":" + formatValue(spectroscopyMoisture, 2) + "},\"absorbance_readings\":{\"blue\":" + formatAbsorbance(absorbanceBlue, 2) + ",\"clear\":" + formatAbsorbance(absorbanceClear, 2) + ",\"orange\":" + formatAbsorbance(absorbanceOrange, 2) + ",\"near_ir\":" + formatAbsorbance(absorbanceNIR, 2) + ",\"red_ch7\":" + formatAbsorbance(absorbanceRedCh7, 2) + ",\"red_ch8\":" + formatAbsorbance(absorbanceRedCh8, 2) + ",\"green_ch4\":" + formatAbsorbance(absorbanceGreenCh4, 2) + ",\"green_ch5\":" + formatAbsorbance(absorbanceGreenCh5, 2) + ",\"violet_ch1\":" + formatAbsorbance(absorbanceVioletCh1, 2) + ",\"violet_ch2\":" + formatAbsorbance(absorbanceVioletCh2, 2) + "}}}";
+    
     return jsonPayload;
 }
