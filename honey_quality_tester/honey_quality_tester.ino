@@ -136,14 +136,12 @@ void handleStartAnalysis() {
     return;
   }
   // Display message for debugging start of analysis
-  Serial.println("Starting sample analysis...");
-  Serial.println("After starting sample analysis...");
-  // display.clearDisplay();
-  // display.setCursor(0, 0);
-  // display.print("Analyzing the sample...");
-  // display.display();
-
   Serial.println("Analyzing the sample...");
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("Analyzing the sample...");
+  display.display();
+
 
   int readingsCount = 0;
 

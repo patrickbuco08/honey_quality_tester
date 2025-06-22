@@ -223,7 +223,7 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
   </head>
   <body>
     <nav class="navbar">
-      <h1 class="navbar-logo">Honey Quality Tester</h1>
+      <span class="navbar-logo">Honey Quality Tester</span>
     </nav>
 
     <div class="container">
