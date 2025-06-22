@@ -69,7 +69,7 @@ String jsonDataResolver(
     float absorbanceVioletCh1,
     float absorbanceVioletCh2
   ) {
-    String jsonPayload = "{";
+    String jsonPayload = "{\"data\":{";
     jsonPayload += "\"ambient_reading\": {\"humidity\": " + String(humidityValue, 2) + ", \"temperature\": " + String(tempValue, 2) + "},";
     jsonPayload += "\"sensor_readings\": {\"ec_value\": " + String(ECValue, 2) + ", \"moisture\": " + String(moistureValue, 2) + ", \"ph_value\": " + String(phValue, 2) + ", \"spectroscopy_moisture\": " + String(spectroscopyMoisture, 2) + "},";
     jsonPayload += "\"absorbance_readings\": {";
@@ -84,6 +84,5 @@ String jsonDataResolver(
     jsonPayload += "\"violet_ch1\": " + String(absorbanceVioletCh1, 2) + ", ";
     jsonPayload += "\"violet_ch2\": " + String(absorbanceVioletCh2, 2);
     jsonPayload += "}}";
-  
     return jsonPayload;
 }
