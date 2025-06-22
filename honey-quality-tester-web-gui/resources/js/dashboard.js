@@ -28,32 +28,38 @@ document.addEventListener("DOMContentLoaded", () => {
                     ?.getAttribute("data-sample-id");
 
                 if (String(result.sample.id) !== currentSampleId) {
+                    // Add fixed position styles
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .toast-center {
+                            position: fixed !important;
+                            top: 1rem !important;
+                            left: 50% !important;
+                            transform: translateX(-50%) !important;
+                            z-index: 9999 !important;
+                            width: calc(100% - 2rem) !important;
+                            max-width: 400px !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+
                     Toastify({
                         text: "🍯 Sweet! A new honey sample just came in!",
                         duration: 5000,
-                        gravity: "top",
-                        position: "center",
-                        offset: {
-                            x: 0,
-                            y: "1em",
-                        },
+                        className: "toast-center",
                         style: {
                             background: "#F6BE00",
                             color: "white",
                             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
                             borderRadius: "0.75rem",
                             padding: "1rem 1.5rem",
-                            width: "calc(100% - 2rem)",
-                            maxWidth: "400px",
                             fontWeight: "500",
-                            margin: "0 auto",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             textAlign: "center",
                             boxSizing: "border-box",
                         },
-                        className: "toast-center",
                     }).showToast();
 
                     document
