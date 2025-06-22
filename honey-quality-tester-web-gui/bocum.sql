@@ -162,7 +162,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (6, '2025_06_21_064308_create_personal_access_tokens_table', 4);
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Beehive Admin', 'beehiveadmin@cvsu.edu.ph', '2025-06-21 04:34:06', '$2y$12$pnHdVupvIqQ7sOLwEEAQbe3zjZQDvnO62SRhKY3XMXMZzz/Upndqi', 'AHejVzGO6XIRnOGT1OHBhMveEXyJeV2kUyyaqW1E802e1regHyGr4P6EJg3m', '2025-06-21 04:34:06', '2025-06-21 04:34:06');
+(1, 'Honey Admin', 'honeyadmin@cvsu.edu.ph', '2025-06-21 04:34:06', '$2y$12$pnHdVupvIqQ7sOLwEEAQbe3zjZQDvnO62SRhKY3XMXMZzz/Upndqi', 'AHejVzGO6XIRnOGT1OHBhMveEXyJeV2kUyyaqW1E802e1regHyGr4P6EJg3m', '2025-06-21 04:34:06', '2025-06-21 04:34:06');
 
 
 
