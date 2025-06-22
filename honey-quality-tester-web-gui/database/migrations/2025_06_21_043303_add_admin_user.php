@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         DB::table('users')->insert([
-            'name' => 'Beehive Admin',
-            'email' => 'beehiveadmin@cvsu.edu.ph',
+            'name' => 'Honey Admin',
+            'email' => 'honeyadmin@cvsu.edu.ph',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
             'created_at' => now(),
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::table('users')->where('email', 'beehiveadmin@cvsu.edu.ph')->delete();
+        DB::table('users')->where('email', 'honeyadmin@cvsu.edu.ph')->delete();
     }
 };

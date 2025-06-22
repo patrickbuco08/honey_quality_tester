@@ -27,26 +27,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     .querySelector("[data-sample-id]")
                     ?.getAttribute("data-sample-id");
 
-                console.log(
-                    "String(result.sample.id)",
-                    String(result.sample.id)
-                );
-                console.log("currentSampleId", currentSampleId);
-
                 if (String(result.sample.id) !== currentSampleId) {
                     Toastify({
                         text: "🍯 Sweet! A new honey sample just came in!",
                         duration: 5000,
-                        gravity: "top", // can also use "bottom"
+                        gravity: "top",
                         position: "center",
+                        offset: {
+                            x: 0,
+                            y: "1em",
+                        },
                         style: {
                             background: "#F6BE00",
                             color: "white",
-                            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                            borderRadius: "0.75rem", // rounded-xl
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                            borderRadius: "0.75rem",
                             padding: "1rem 1.5rem",
-                            fontWeight: "400",
+                            width: "calc(100% - 2rem)",
+                            maxWidth: "400px",
+                            fontWeight: "500",
+                            margin: "0 auto",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            boxSizing: "border-box",
                         },
+                        className: "toast-center",
                     }).showToast();
 
                     document

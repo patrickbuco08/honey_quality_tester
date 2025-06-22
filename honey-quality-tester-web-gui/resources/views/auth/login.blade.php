@@ -32,7 +32,6 @@
                         <input type="checkbox" name="remember" class="form-checkbox text-honey rounded">
                         <span>Remember me</span>
                     </label>
-                    <a href="#" class="text-honey hover:text-honey-dark hover:underline">Forgot Password?</a>
                 </div>
 
                 <button type="submit"
@@ -40,11 +39,6 @@
                     Sign In
                 </button>
             </form>
-
-            <p class="mt-6 text-center text-sm text-gray-600">
-                Don’t have an account?
-                <a href="#" class="text-honey hover:text-honey-dark hover:underline font-medium">Sign up</a>
-            </p>
         </div>
     </div>
 
