@@ -10,11 +10,12 @@
 #include "EC.h"
 #include "dht22.h"
 #include "moisture.h"
+#include "api_client.h"
 #include "honey_web_gui.h"
 
-//Wifi Name for your ESP32
-const char* ssid = "ESP32-Honey Quality";
-const char* password = "12345678";
+// WiFi credentials for your existing Wi-Fi network
+const char* ssid = "ZTE_2.4G_Z47tFc";
+const char* password = "hFPCQCUc";
 WebServer server(80);
 
 // Define your pins and peripherals
@@ -52,11 +53,17 @@ unsigned long analysisStartTime = 0;
 
 void setup() {
   Serial.begin(115200);
-  // Initialize Wi-Fi
-  WiFi.softAP(ssid, password);
-  Serial.println("Access Point Started");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.softAPIP());
+  // Initialize Wi-Fi in station (client) mode
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.print("ESP32 IP Address: ");
+  Serial.println(WiFi.localIP());
   init_dht22();
   // Define page routes
   // Serve the main HTML page
@@ -249,16 +256,36 @@ void handleStartAnalysis() {
   displayResults(phValue, moistureValue, ECValue, tempValue, humidityValue, isReal);
 
   // Log results to SD card
-  logResults(phValue, ECValue, moistureValue, spectroscopyMoisture, tempValue, humidityValue, absorbanceVioletCh1, absorbanceVioletCh2, absorbanceBlue, absorbanceGreenCh4, absorbanceGreenCh5, absorbanceOrange, absorbanceRedCh7, absorbanceRedCh8, absorbanceClear, absorbanceNIR, isReal);
 
-  // Send JSON response back to the client
-  String response = "{\"message\": \"Analysis completed.\"}";
-  server.send(200, "application/json", response);
+  // Clean up calibration memory
   delete[] I0;
 
   Serial.println("done analysis...");
 
   turn_OFF_RGB();
+
+
+  // Prepare and send JSON to server
+  String jsonPayload = jsonDataResolver(
+    humidityValue,
+    tempValue,
+    ECValue,
+    moistureValue,
+    phValue,
+    spectroscopyMoisture,
+    absorbanceBlue,
+    absorbanceClear,
+    absorbanceOrange,
+    absorbanceNIR,
+    absorbanceRedCh7,
+    absorbanceRedCh8,
+    absorbanceGreenCh4,
+    absorbanceGreenCh5,
+    absorbanceVioletCh1,
+    absorbanceVioletCh2
+  );
+
+  sendHoneySampleToServer(jsonPayload);
 }
 
 

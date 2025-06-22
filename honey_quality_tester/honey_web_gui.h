@@ -5,16 +5,24 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Honey Quality Tester</title>
     <style>
+      /* CSS Reset by Eric Meyer */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
         font-family: Arial, sans-serif;
         background: #fdfdfb;
-        padding: 20px;
         color: #333;
+        margin: 0;
       }
       h1 {
-        color: #a86e00;
+        color: #daa520;
         text-align: center;
         margin-bottom: 20px;
       }
@@ -22,8 +30,32 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
         border-radius: 12px;
         padding: 16px;
         margin-bottom: 20px;
-        box-shadow: 0 4px 16px 0 rgba(0,0,0,0.08), 0 1.5px 5px 0 rgba(0,0,0,0.06);
+        box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.08),
+          0 1.5px 5px 0 rgba(0, 0, 0, 0.06);
         background: #fff;
+      }
+      .navbar {
+        width: 100%;
+        background: #fff;
+        box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+        padding: 0.8rem 0 0.8rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        margin-bottom: 18px;
+      }
+      .navbar-logo {
+        font-size: 1.25rem;
+        color: #daa520;
+        font-weight: bold;
+        margin-left: 2.2rem;
+        letter-spacing: 1px;
+        font-family: inherit;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 18px;
       }
       .section h2 {
         font-size: 1.1em;
@@ -55,16 +87,26 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
         gap: 10px;
         margin-top: 10px;
       }
+      .calibration-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+      }
+      @media (max-width: 700px) {
+        .calibration-grid {
+          grid-template-columns: 1fr;
+        }
+      }
       button {
         padding: 10px 16px;
         font-size: 0.9em;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.5rem;
         cursor: pointer;
       }
       .btn-analyze {
-        background-color: #ffcc00;
-        color: #000;
+        background-color: #daa520;
+        color: white;
       }
       .btn-calibrate {
         background-color: #0099cc;
@@ -81,185 +123,241 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
         margin-top: 10px;
         font-size: 0.9em;
       }
-    .note {
-      color: #b71c1c;
-      margin-top: 10px;
-      font-size: 0.98em;
-    }
-    .pns-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      background: #fff;
-      color: #222;
-      font-size: 1em;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .pns-table th, .pns-table td {
-      border-bottom: 1px solid #e0e0e0;
-      padding: 10px 14px;
-      text-align: left;
-    }
-    .pns-table th {
-      background: #f5f5f5;
-      font-weight: bold;
-      font-size: 1.05em;
-      color: #a86e00;
-    }
-    .pns-table tr:last-child td {
-      border-bottom: none;
-    }
-    .pns-table em {
-      color: #b77a00;
-      font-style: italic;
-    }
-    .note strong {
-      color: #ff5252;
-      display: block;
-      margin-bottom: 6px;
-    }
+      .note {
+        color: #b71c1c;
+        margin-top: 10px;
+        font-size: 0.98em;
+      }
+      .pns-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        background: #fff;
+        color: #222;
+        font-size: 1em;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .pns-table th,
+      .pns-table td {
+        border-bottom: 1px solid #e0e0e0;
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .pns-table th {
+        background: #f5f5f5;
+        font-weight: bold;
+        font-size: 1.05em;
+        color: #daa520;
+      }
+      .pns-table tr:last-child td {
+        border-bottom: none;
+      }
+      .pns-table em {
+        color: #daa520;
+        font-style: italic;
+      }
+      .note strong {
+        color: #ff5252;
+        display: block;
+        margin-bottom: 6px;
+      }
+      /* Modal for Classes of Honey */
+      .info-modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.32);
+        justify-content: center;
+        align-items: center;
+      }
+      .info-modal-overlay.active {
+        display: flex;
+      }
+      .info-modal-content {
+        background: #fff;
+        padding: 28px 18px 18px 18px;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 96vw;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        position: relative;
+      }
+      @media (max-width: 700px) {
+        .info-modal-content {
+          border-radius: 0;
+          width: 100vw;
+          max-width: 100vw;
+          height: 100vh;
+          min-height: 100vh;
+          box-shadow: none;
+          padding: 38px 18px 18px 18px;
+        }
+      }
+      .info-modal-content h2 {
+        margin-top: 0;
+        font-size: 1.15em;
+        color: #daa520;
+      }
+      .info-modal-content .note {
+        margin-top: 0;
+        font-size: 0.96em;
+      }
+      .info-modal-content #closeInfoModal {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 2em;
+        color: #daa520;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
-    <h1>Honey Quality Tester</h1>
+    <nav class="navbar">
+      <span class="navbar-logo">Honey Quality Tester</span>
+    </nav>
 
-    <div class="section">
-      <h2>Sensor Readings</h2>
-      <div class="field-group">
-        <div class="field">
-          <label for="phValue">pH Value:</label
-          ><input type="text" id="phValue" readonly />
-        </div>
-        <div class="field">
-          <label for="ECValue">EC Value (us/cm):</label
-          ><input type="text" id="ECValue" readonly />
-        </div>
-        <div class="field">
-          <label for="moistureValue">Moisture (%):</label
-          ><input type="text" id="moistureValue" readonly />
-        </div>
-        <div class="field">
-          <label for="spectroscopyMoisture">Spectroscopy Moisture (%):</label
-          ><input type="text" id="spectroscopyMoisture" readonly />
+    <div class="container">
+      <div class="section">
+        <h2>Calibration Buttons</h2>
+        <div class="buttons calibration-grid">
+          <button id="calibratePH4" class="btn-calibrate">
+            Calibrate pH Sensor (4.01)
+          </button>
+          <button id="calibratePH9" class="btn-calibrate">
+            Calibrate pH Sensor (9.18)
+          </button>
+          <button id="calibrateEC1" class="btn-calibrate">
+            Calibrate EC Sensor (1413)
+          </button>
+          <button id="calibrateEC2" class="btn-calibrate">
+            Calibrate EC Sensor (1288)
+          </button>
+          <button id="calibrateAS7341" class="btn-calibrate">
+            Calibrate AS7341
+          </button>
         </div>
       </div>
-    </div>
 
-    <div class="section">
-      <div class="note">
-        <strong>According to the Philippine National Standard (PNS/BAFS __:2022), honey should have:</strong>
-        <table class="pns-table">
+      <div class="section">
+        <h2>Analyze Honey Sample</h2>
+        <button id="startAnalysis" class="btn-analyze">Start Analysis</button>
+        <span
+          style="
+            display: inline-flex;
+            align-items: center;
+            margin-left: 10px;
+            gap: 4px;
+          "
+        >
+          <button
+            id="infoButton"
+            title="Standard Parameters"
+            style="
+              background: transparent;
+              border: none;
+              cursor: pointer;
+              padding: 0;
+              vertical-align: middle;
+              outline: none;
+            "
+          >
+            <svg
+              height="22"
+              width="22"
+              viewBox="0 0 22 22"
+              style="vertical-align: middle"
+            >
+              <circle
+                cx="11"
+                cy="11"
+                r="10"
+                fill="none"
+                stroke="#DAA520"
+                stroke-width="2"
+              />
+              <text
+                x="11"
+                y="16"
+                text-anchor="middle"
+                font-size="13"
+                fill="#DAA520"
+                font-family="Arial"
+                font-weight="bold"
+              >
+                i
+              </text>
+            </svg>
+          </button>
+        </span>
+        <div id="note" class="note"></div>
+      </div>
+    </div>
+    <!-- end container -->
+
+    <!-- Info Modal for Classes of Honey -->
+    <div id="infoModal" class="info-modal-overlay">
+      <div class="info-modal-content">
+        <button id="closeInfoModal">&times;</button>
+        <h2>Classes of Honey for Honey Quality Tester</h2>
+        <table class="pns-table" style="margin-bottom: 10px">
           <thead>
             <tr>
               <th>Moisture Content</th>
-              <th>Electrical Conductivity (EC)</th>
+              <th>Electrical Conductivity</th>
+              <th>pH Value</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>&le; 20% <em>(Apis mellifera, cerana)</em></td>
-              <td>&le; 0.8 mS/cm</td>
+              <td>
+                &le; 20% <em>(Apis mellifera<br />and Apis cerana)</em>
+              </td>
+              <td>
+                &lt; 0.8 mS/cm
+                <span style="font-size: 0.95em">(most honey)</span>
+              </td>
+              <td>&ge; 3.7</td>
             </tr>
             <tr>
-              <td>&le; 23% <em>(wild honey)</em></td>
-              <td>&ge; 0.8 mS/cm <span style="font-size:0.95em;">(honeydew/chestnut)</span></td>
+              <td>
+                &le; 23% <em>(Apis dorsata<br />and Apis breviligula)</em>
+              </td>
+              <td>
+                &gt; 0.8 mS/cm
+                <span style="font-size: 0.95em"
+                  >(only for chestnut honey, honeydew honey and their
+                  blend)</span
+                >
+              </td>
+              <td>&le; 4.5</td>
             </tr>
             <tr>
-              <td>&le; 24% <em>(stingless bee honey)</em></td>
+              <td>&le; 24% <em>(Tetragonula spp.)</em></td>
+              <td></td>
               <td></td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Ambient Reading</h2>
-      <div class="field-group">
-        <div class="field">
-          <label for="tempValue">Temperature (°C):</label
-          ><input type="text" id="tempValue" readonly />
-        </div>
-        <div class="field">
-          <label for="humidityValue">Relative Humidity (%):</label
-          ><input type="text" id="humidityValue" readonly />
+        <div class="note">
+          <em
+            >The values of parameters are based on the following
+            studies/articles: <b>Moisture</b> (Bureau of Agriculture and
+            Fisheries Standards [BAFS], 2022),
+            <b>Electrical Conductivity</b> (BAFS 2022) and
+            <b>pH Values</b> (Codex Standard for Honey [CAC], 1981).</em
+          >
         </div>
       </div>
-    </div>
-
-    <div class="section">
-      <h2>Absorbance Readings</h2>
-      <div class="field-group">
-        <div class="field">
-          <label for="violetCh1Value">Violet Ch1:</label
-          ><input type="text" id="violetCh1Value" readonly />
-        </div>
-        <div class="field">
-          <label for="violetCh2Value">Violet Ch2:</label
-          ><input type="text" id="violetCh2Value" readonly />
-        </div>
-        <div class="field">
-          <label for="blueValue">Blue:</label
-          ><input type="text" id="blueValue" readonly />
-        </div>
-        <div class="field">
-          <label for="greenCh4Value">Green Ch4:</label
-          ><input type="text" id="greenCh4Value" readonly />
-        </div>
-        <div class="field">
-          <label for="greenCh5Value">Green Ch5:</label
-          ><input type="text" id="greenCh5Value" readonly />
-        </div>
-        <div class="field">
-          <label for="orangeValue">Orange:</label
-          ><input type="text" id="orangeValue" readonly />
-        </div>
-        <div class="field">
-          <label for="redCh7Value">Red Ch7:</label
-          ><input type="text" id="redCh7Value" readonly />
-        </div>
-        <div class="field">
-          <label for="redCh8Value">Red Ch8:</label
-          ><input type="text" id="redCh8Value" readonly />
-        </div>
-        <div class="field">
-          <label for="clearValue">Clear:</label
-          ><input type="text" id="clearValue" readonly />
-        </div>
-        <div class="field">
-          <label for="nirValue">Near-IR:</label
-          ><input type="text" id="nirValue" readonly />
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Calibration Buttons</h2>
-      <div class="buttons">
-        <button id="calibratePH4" class="btn-calibrate">
-          Calibrate pH Sensor (4.01)
-        </button>
-        <button id="calibratePH9" class="btn-calibrate">
-          Calibrate pH Sensor (9.18)
-        </button>
-        <button id="calibrateEC1" class="btn-calibrate">
-          Calibrate EC Sensor (1413)
-        </button>
-        <button id="calibrateEC2" class="btn-calibrate">
-          Calibrate EC Sensor (1288)
-        </button>
-        <button id="calibrateAS7341" class="btn-calibrate">
-          Calibrate AS7341
-        </button>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Analyze Honey Sample</h2>
-      <button id="startAnalysis" class="btn-analyze">Start Analysis</button>
-      <div id="note" class="note"></div>
     </div>
 
     <script>
@@ -283,7 +381,8 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
             document.getElementById("phValue").value = data.pH;
             document.getElementById("ECValue").value = data.ec;
             document.getElementById("moistureValue").value = data.moisture;
-            document.getElementById("spectroscopyMoisture").value = data.spectroscopyMoisture; // Now using the dedicated spectroscopyMoisture value
+            document.getElementById("spectroscopyMoisture").value =
+              data.spectroscopyMoisture; // Now using the dedicated spectroscopyMoisture value
             document.getElementById("tempValue").value = data.temperature;
             document.getElementById("humidityValue").value = data.humidity;
             document.getElementById("violetCh1Value").value =
@@ -338,16 +437,20 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
           pH9: "calibratePH9",
           EC1: "calibrateEC1",
           EC2: "calibrateEC2",
-          AS7341: "calibrateAS7341"
+          AS7341: "calibrateAS7341",
         };
         const btnId = btnMap[type];
         const btn = document.getElementById(btnId);
         const defaultText = btn ? btn.textContent : "";
         if (btn) btn.textContent = "Calibrating... please wait.";
-        document.getElementById("note").innerText = `Calibrating ${type}... please wait.`;
+        document.getElementById(
+          "note"
+        ).innerText = `Calibrating ${type}... please wait.`;
         const url = getCalibrationUrl(type);
         if (!url) {
-          document.getElementById("note").innerText = `Unknown calibration type: ${type}`;
+          document.getElementById(
+            "note"
+          ).innerText = `Unknown calibration type: ${type}`;
           if (btn) btn.textContent = defaultText;
           enableButtons();
           return;
@@ -358,7 +461,9 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
             document.getElementById("note").innerText = data.message;
           })
           .catch((error) => {
-            document.getElementById("note").innerText = `Error calibrating ${type}: ${error.message}`;
+            document.getElementById(
+              "note"
+            ).innerText = `Error calibrating ${type}: ${error.message}`;
             console.error("Calibration error:", error);
           })
           .finally(() => {
@@ -391,7 +496,22 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
 
       // --- Event listeners ---
       window.addEventListener("DOMContentLoaded", () => {
-        fetchLatestLog();
+        // fetchLatestLog();
+        // Info Modal functionality
+        const infoBtn = document.getElementById("infoButton");
+        const infoModal = document.getElementById("infoModal");
+        const closeModalBtn = document.getElementById("closeInfoModal");
+        if (infoBtn && infoModal && closeModalBtn) {
+          infoBtn.addEventListener("click", () => {
+            infoModal.classList.add("active");
+          });
+          closeModalBtn.addEventListener("click", () => {
+            infoModal.classList.remove("active");
+          });
+          infoModal.addEventListener("click", (e) => {
+            if (e.target === infoModal) infoModal.classList.remove("active");
+          });
+        }
         // Attach calibration listeners
         document
           .getElementById("calibratePH4")
