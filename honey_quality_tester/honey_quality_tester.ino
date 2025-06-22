@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <ESPmDNS.h>  // Add mDNS support
 
 #include "ph.h"
 #include "as7341.h"
@@ -16,6 +17,10 @@
 // WiFi credentials for your existing Wi-Fi network
 const char* ssid = "ZTE_2.4G_Z47tFc";
 const char* password = "hFPCQCUc";
+
+// const char* ssid = "HoneyTester_AP";
+// const char* password = "PureHoney2025!";
+
 WebServer server(80);
 
 // Define your pins and peripherals
@@ -64,6 +69,15 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.print("ESP32 IP Address: ");
   Serial.println(WiFi.localIP());
+  
+  // Initialize mDNS
+  if (!MDNS.begin("honey-tester")) {  // Start mDNS with name "honey-tester"
+    Serial.println("Error setting up mDNS responder!");
+  } else {
+    Serial.println("mDNS responder started");
+    Serial.println("Access the device at: http://honey-tester.local");
+  }
+  
   init_dht22();
   // Define page routes
   // Serve the main HTML page
