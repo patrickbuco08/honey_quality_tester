@@ -1,7 +1,7 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 
-#define BOCUM_API_BASE_URL "https://honey-quality-tester.bucocu.net"
+#define BOCUM_API_BASE_URL "https://honey-quality-tester.bucocu.net/public/index.php"
 #define BOCUM_API_TOKEN "Fc0gBn7eLzWqkA8n3U2Jv5PpYeGiDR9tQsBhEMZLxVfNK6cyH1uOgTIabXCdqMwY"
 
 bool sendHoneySampleToServer(String jsonPayload) {
@@ -14,6 +14,8 @@ bool sendHoneySampleToServer(String jsonPayload) {
     String endpoint = String(BOCUM_API_BASE_URL) + "/api/honey-samples";
     Serial.println("Sending POST request to: " + endpoint);
 
+    Serial.println("Using endpoint: " + endpoint);
+    https.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
     https.begin(client, endpoint);
     https.addHeader("Content-Type", "application/json");
     https.addHeader("Authorization", String("Bearer ") + BOCUM_API_TOKEN);
@@ -21,6 +23,7 @@ bool sendHoneySampleToServer(String jsonPayload) {
     int httpResponseCode = https.POST(jsonPayload);
 
     Serial.println("httpResponseCode: " + String(httpResponseCode));
+    Serial.println("Redirect location (if any): " + https.header("Location"));
     Serial.println("Response body:");
     Serial.println(https.getString());
 
