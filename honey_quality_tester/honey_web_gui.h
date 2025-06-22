@@ -483,7 +483,6 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
           .then((response) => response.json())
           .then((data) => {
             noteEl.innerText = data.message;
-            fetchLatestLog();
           })
           .catch((error) => {
             noteEl.innerText = "Note: Analysis could not be started.";

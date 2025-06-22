@@ -1,35 +1,34 @@
-#include <WiFiClient.h>
+#include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 
-#define BOCUM_API_BASE_URL "http://bucocu.net"
+#define BOCUM_API_BASE_URL "https://honey-quality-tester.bucocu.net"
 #define BOCUM_API_TOKEN "Fc0gBn7eLzWqkA8n3U2Jv5PpYeGiDR9tQsBhEMZLxVfNK6cyH1uOgTIabXCdqMwY"
 
 bool sendHoneySampleToServer(String jsonPayload) {
-    WiFiClient client;
+    WiFiClientSecure client;
     HTTPClient https;
-  
+
+    client.setInsecure(); // Skips SSL certificate validation
+
     bool success = false;
-  
+
     https.begin(client, String(BOCUM_API_BASE_URL) + "/api/honey-samples");
     https.addHeader("Content-Type", "application/json");
     https.addHeader("Authorization", String("Bearer ") + BOCUM_API_TOKEN);
-  
+
     int httpResponseCode = https.POST(jsonPayload);
 
-    Serial.println(httpResponseCode);
-    Serial.println(https.getString());
-  
     if (httpResponseCode == 201) {
-      Serial.println("POST successful");
-      Serial.println(https.getString());
-      success = true;
+        Serial.println("POST successful");
+        Serial.println(https.getString());
+        success = true;
     } else {
-      Serial.print("POST failed, error: ");
-      Serial.println(https.errorToString(httpResponseCode).c_str());
+        Serial.print("POST failed, error: ");
+        Serial.println(https.errorToString(httpResponseCode).c_str());
     }
-  
+
     https.end();
-  
+
     return success;
 }
 
