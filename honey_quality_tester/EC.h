@@ -17,7 +17,6 @@ int EC2_analogValue = 0; // Analog reading in 1288 µS/cm solution
 
 float EC_calibrationValue() {
     int sensorValue = analogRead(EC_PIN);
-    Serial.println("EC sensor value: " + String(sensorValue));
     return sensorValue;
 }
 

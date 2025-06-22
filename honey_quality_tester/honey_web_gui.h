@@ -38,7 +38,7 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
         width: 100%;
         background: #fff;
         box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
-        padding: 0.8rem 0 0.8rem 0;
+        padding: 1rem 0 1rem 0;
         position: sticky;
         top: 0;
         z-index: 10;
@@ -223,7 +223,7 @@ const char HTML_PAGE[] PROGMEM = R"rawliteral(
   </head>
   <body>
     <nav class="navbar">
-      <span class="navbar-logo">Honey Quality Tester</span>
+      <h1 class="navbar-logo">Honey Quality Tester</h1>
     </nav>
 
     <div class="container">

@@ -15,6 +15,9 @@ bool sendHoneySampleToServer(String jsonPayload) {
     https.addHeader("Authorization", String("Bearer ") + BOCUM_API_TOKEN);
   
     int httpResponseCode = https.POST(jsonPayload);
+
+    Serial.println(httpResponseCode);
+    Serial.println(https.getString());
   
     if (httpResponseCode == 201) {
       Serial.println("POST successful");
