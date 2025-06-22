@@ -5,9 +5,6 @@
 #define BOCUM_API_TOKEN "Fc0gBn7eLzWqkA8n3U2Jv5PpYeGiDR9tQsBhEMZLxVfNK6cyH1uOgTIabXCdqMwY"
 
 bool sendHoneySampleToServer(String jsonPayload) {
-    // Force payload to debug value
-    jsonPayload = "{\"data\":{\"source\":\"curl\"}}";
-
     WiFiClientSecure client;
     HTTPClient https;
 
