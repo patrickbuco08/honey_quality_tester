@@ -253,16 +253,6 @@ void handleStartAnalysis() {
   // Display results on OLED
   displayResults(phValue, moistureValue, ECValue, tempValue, humidityValue, isReal);
 
-  // Log results to SD card
-
-  // Clean up calibration memory
-  delete[] I0;
-
-  Serial.println("done analysis...");
-
-  turn_OFF_RGB();
-
-
   // Prepare and send JSON to server
   String jsonPayload = jsonDataResolver(
     humidityValue,
@@ -283,7 +273,22 @@ void handleStartAnalysis() {
     absorbanceVioletCh2
   );
 
-  sendHoneySampleToServer(jsonPayload);
+  bool sent = sendHoneySampleToServer(jsonPayload);
+
+  // Clean up calibration memory
+  delete[] I0;
+
+  Serial.println("done analysis...");
+
+  turn_OFF_RGB();
+
+  server.send(
+    sent ? 200 : 500,
+    "application/json",
+    sent 
+      ? "{\"message\": \"Analysis completed.\"}" 
+      : "{\"error\": \"Failed to send honey sample to server.\"}"
+  );
 }
 
 
