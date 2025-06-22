@@ -11,19 +11,21 @@ bool sendHoneySampleToServer(String jsonPayload) {
     client.setInsecure(); // Skips SSL certificate validation
 
     bool success = false;
+    String endpoint = String(BOCUM_API_BASE_URL) + "/api/honey-samples";
+    Serial.println("Sending POST request to: " + endpoint);
 
-    https.begin(client, String(BOCUM_API_BASE_URL) + "/api/honey-samples");
+    https.begin(client, endpoint);
     https.addHeader("Content-Type", "application/json");
     https.addHeader("Authorization", String("Bearer ") + BOCUM_API_TOKEN);
 
     int httpResponseCode = https.POST(jsonPayload);
 
     Serial.println("httpResponseCode: " + String(httpResponseCode));
-    Serial.println("https.getString(): " + https.getString());
+    Serial.println("Response body:");
+    Serial.println(https.getString());
 
     if (httpResponseCode == 201) {
         Serial.println("POST successful");
-        Serial.println(https.getString());
         success = true;
     } else {
         Serial.print("POST failed, error: ");
