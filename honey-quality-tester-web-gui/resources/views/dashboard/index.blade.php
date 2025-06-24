@@ -4,7 +4,9 @@
 
 @section('content')
     <div class="pt-10 flex flex-col gap-6" data-sample-id="{{ $latestId }}">
+        
         <div class="bg-white shadow-md rounded-2xl p-6">
+            <div id="rename-sample"></div>
             <div class="flex flex-row">
                 <button onclick="document.getElementById('infoModal').classList.remove('hidden')"
                     class="flex items-center gap-2 text-sm text-gray-600 hover:text-yellow-600">

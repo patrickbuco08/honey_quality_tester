@@ -23,4 +23,21 @@ class HoneySampleController extends Controller
             'id' => $sample->id,
         ], 201);
     }
+
+    public function updateName(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $sample = HoneySample::findOrFail($id);
+        $sample->name = $request->input('name');
+        $sample->save();
+
+        return response()->json([
+            'message' => 'Sample name updated successfully.',
+            'id' => $sample->id,
+            'name' => $sample->name,
+        ]);
+    }
 }
