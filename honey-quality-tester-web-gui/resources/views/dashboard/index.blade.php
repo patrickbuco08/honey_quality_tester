@@ -3,10 +3,20 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="pt-10 flex flex-col gap-6" data-sample-id="{{ $latestId }}">
-        
+    <div class="pt-6 flex flex-col gap-6" data-sample-id="{{ $latestId }}">
+        <div class="flex justify-end">
+            <a href="{{ route('samples.export') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded shadow">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Export
+            </a>
+        </div>
+
         <div class="bg-white shadow-md rounded-2xl p-6">
-            <div id="rename-sample"></div>
+            <div id="rename-sample" data-sample-id="{{ $samples[0]->id }}" data-sample-name="{{ $samples[0]->name }}"></div>
+            <p id="date-tested" class="text-gray-700">Date Tested: {{ $samples[0]->created_at->format('F j, Y g:i A') }}</p>
             <div class="flex flex-row">
                 <button onclick="document.getElementById('infoModal').classList.remove('hidden')"
                     class="flex items-center gap-2 text-sm text-gray-600 hover:text-yellow-600">
@@ -18,30 +28,111 @@
                     <span>Honey Standard Parameters</span>
                 </button>
             </div>
-            <p id="date-tested" class="text-gray-700">Date Tested: {{ $samples[0]->created_at->format('F j, Y g:i A') }}</p>
         </div>
         <div class="bg-white shadow-md rounded-2xl p-6">
             <h3 class="text-lg font-semibold text-gray-800">Sensor Readings</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label class="block text-sm text-gray-600 mb-1">pH Value:</label>
+                    @php
+                        $phValue = $samples[0]->data['sensor_readings']['ph_value'] ?? null;
+                        $phClassification = '';
+                        $phClass = 'text-honey-dark';
+                        if ($phValue !== null) {
+                            if ($phValue >= 3.7 && $phValue <= 4.5) {
+                                $phClassification = '(Within range)';
+                                $phClass = 'text-honey';
+                            } else {
+                                $phClassification = '(Outside range)';
+                            }
+                        }
+                    @endphp
+
+                    <label class="block text-sm text-gray-600 mb-1">
+                        pH Value: <span class="{{ $phClass }}">{{ $phClassification }}</span>
+                    </label>
                     <p id="sensor-ph_value" class="w-full border rounded px-3 py-2 bg-gray-100">
-                        {{ $samples[0]->data['sensor_readings']['ph_value'] ?? 'N/A' }}</p>
+                        {{ $phValue ?? 'N/A' }}
+                    </p>
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-600 mb-1">EC Value (uS/cm):</label>
+                    @php
+                        $ecValueRaw = $samples[0]->data['sensor_readings']['ec_value'] ?? null;
+                        $ecValue = $ecValueRaw ? $ecValueRaw / 1000 : null;
+                        $ecClassification = '';
+                        $ecClass = 'text-honey-dark';
+                        if ($ecValue !== null) {
+                            if ($ecValue < 0.8) {
+                                $ecClassification = '(Within range)';
+                                $ecClass = 'text-honey';
+                            } else {
+                                $ecClassification = '(Outside range)';
+                            }
+                        }
+                    @endphp
+
+                    <label class="block text-sm text-gray-600 mb-1">
+                        EC Value (mS/cm): <span class="{{ $ecClass }}">{{ $ecClassification }}</span>
+                    </label>
                     <p id="sensor-ec_value" class="w-full border rounded px-3 py-2 bg-gray-100">
-                        {{ $samples[0]->data['sensor_readings']['ec_value'] ?? 'N/A' }}</p>
+                        {{ $ecValue ?? 'N/A' }}
+                    </p>
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-600 mb-1">Moisture (%):</label>
+                    @php
+                        $moisture = $samples[0]->data['sensor_readings']['moisture'] ?? null;
+                        $moistureClassification = '';
+                        $moistureClass = 'text-honey-dark';
+                        if ($moisture !== null) {
+                            if ($moisture <= 20) {
+                                $moistureClassification = '(Apis mellifera and Apis cerana)';
+                                $moistureClass = 'text-honey';
+                            } elseif ($moisture <= 23) {
+                                $moistureClassification = '(Apis dorsata and Apis breviligula)';
+                                $moistureClass = 'text-honey';
+                            } elseif ($moisture <= 24) {
+                                $moistureClassification = '(Tetragonula spp.)';
+                                $moistureClass = 'text-honey';
+                            } else {
+                                $moistureClassification = '(Outside range)';
+                            }
+                        }
+                    @endphp
+
+                    <label class="block text-sm text-gray-600 mb-1">
+                        Moisture (%): <span class="{{ $moistureClass }}">{{ $moistureClassification }}</span>
+                    </label>
                     <p id="sensor-moisture" class="w-full border rounded px-3 py-2 bg-gray-100">
-                        {{ $samples[0]->data['sensor_readings']['moisture'] ?? 'N/A' }}</p>
+                        {{ $moisture ?? 'N/A' }}
+                    </p>
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-600 mb-1">Spectroscopy Moisture (%):</label>
+                    @php
+                        $specMoisture = $samples[0]->data['sensor_readings']['spectroscopy_moisture'] ?? null;
+                        $specMoistureClassification = '';
+                        $specMoistureClass = 'text-honey-dark';
+                        if ($specMoisture !== null) {
+                            if ($specMoisture <= 20) {
+                                $specMoistureClassification = '(Apis mellifera and Apis cerana)';
+                                $specMoistureClass = 'text-honey';
+                            } elseif ($specMoisture <= 23) {
+                                $specMoistureClassification = '(Apis dorsata and Apis breviligula)';
+                                $specMoistureClass = 'text-honey';
+                            } elseif ($specMoisture <= 24) {
+                                $specMoistureClassification = '(Tetragonula spp.)';
+                                $specMoistureClass = 'text-honey';
+                            } else {
+                                $specMoistureClassification = '(Outside range)';
+                            }
+                        }
+                    @endphp
+
+                    <label class="block text-sm text-gray-600 mb-1">
+                        Spectroscopy Moisture (%): <span
+                            class="{{ $specMoistureClass }}">{{ $specMoistureClassification }}</span>
+                    </label>
                     <p id="sensor-spectroscopy_moisture" class="w-full border rounded px-3 py-2 bg-gray-100">
-                        {{ $samples[0]->data['sensor_readings']['spectroscopy_moisture'] ?? 'N/A' }}</p>
+                        {{ $specMoisture ?? 'N/A' }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -129,13 +220,12 @@
                 <tbody class="text-sm text-gray-700">
                     <tr>
                         <td class="p-2 border border-gray-300">≤ 20% <em>(Apis mellifera and Apis cerana)</em></td>
-                        <td class="p-2 border border-gray-300">&lt; 0.8 mS/cm (most honey)</td>
+                        <td class="p-2 border border-gray-300">&lt; 0.8 mS/cm</td>
                         <td class="p-2 border border-gray-300">≥ 3.7</td>
                     </tr>
                     <tr>
                         <td class="p-2 border border-gray-300">≤ 23% <em>(Apis dorsata and Apis breviligula)</em></td>
-                        <td class="p-2 border border-gray-300">&gt; 0.8 mS/cm (only for chestnut honey, honeydew honey
-                            and their blend)</td>
+                        <td class="p-2 border border-gray-300"></td>
                         <td class="p-2 border border-gray-300">≤ 4.5</td>
                     </tr>
                     <tr>
@@ -156,4 +246,5 @@
 
 @push('scripts')
     <script type="module" src="{{ Vite::asset('resources/js/dashboard.js') }}"></script>
+    <script type="module" src="{{ Vite::asset('resources/js/page/dashboard/index.jsx') }}"></script>
 @endpush

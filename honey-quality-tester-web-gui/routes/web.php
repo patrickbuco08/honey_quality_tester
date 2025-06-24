@@ -21,4 +21,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/latest-honey-sample', [DashboardController::class, 'latest'])->name('latest.honey.sample');
     Route::patch('/honey-samples/{id}/name', [HoneySampleController::class, 'updateName']);
+    Route::get('/samples/export', [HoneySampleController::class, 'export'])->name('samples.export');
 });

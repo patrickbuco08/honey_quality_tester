@@ -5,6 +5,8 @@ namespace Bocum\Http\Controllers\Api;
 use Bocum\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Bocum\Models\HoneySample;
+use Maatwebsite\Excel\Facades\Excel;
+use Bocum\Exports\HoneySamplesExport;
 
 class HoneySampleController extends Controller
 {
@@ -39,5 +41,10 @@ class HoneySampleController extends Controller
             'id' => $sample->id,
             'name' => $sample->name,
         ]);
+    }
+
+    public function export()
+    {
+        return Excel::download(new HoneySamplesExport, 'honey_samples.xlsx');
     }
 }
